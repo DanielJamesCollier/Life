@@ -7,7 +7,11 @@
 
 /*public RAII*/
 //--------------------------------------
-sdl_module::sdl_module(int width, int height, int scale) {
+sdl_module::sdl_module(int width, int height, int scale) 
+:   width{width}
+,   height{height}
+,   scale{scale}
+{
     
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());

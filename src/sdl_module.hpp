@@ -22,13 +22,28 @@ public /* functions */:
    void draw(std::array<std::uint32_t, WIDTH * HEIGHT> const & pixels) {
         SDL_UpdateTexture(m_renderTexture, nullptr, pixels.data(), WIDTH * sizeof(std::uint32_t)); 
         SDL_RenderCopy(m_renderer, m_renderTexture, nullptr, nullptr); 
-        SDL_RenderPresent(m_renderer);
    }
 
+   void draw_grid() {
+        SDL_SetRenderDrawColor(m_renderer, 31, 67, 124, 255);
+        
+        for (auto i = 0; i < width; i++) 
+            SDL_RenderDrawLine(m_renderer, i * scale * 2, height * scale * 2, i * scale * 2, 0);
+        
+        for (auto i = 0; i < width; i++) 
+            SDL_RenderDrawLine(m_renderer, 0, i * scale * 2, width * scale * 2 , i * scale * 2 );
+   } 
+
+   void swap_back_buffer() {
+        SDL_RenderPresent(m_renderer);
+   }
 private /* data */:
     SDL_Event m_event;
     SDL_Window *m_window;
     SDL_Renderer *m_renderer;
     SDL_Texture *m_renderTexture;
+    int width;
+    int height;
+    int scale;
 };
 #endif // SDL_MODULE_HPP

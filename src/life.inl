@@ -9,8 +9,41 @@ life<WIDTH, HEIGHT>::life()
 ,   grid_b{}
 ,   current_gen{grid_a}
 ,   next_gen{grid_b}
+,   generation_counter{}
 {
-    reset_to_random_grid();
+//    reset_to_random_grid();
+    
+    // top two lines 
+    //-----------------------------------
+    for (auto i = 0; i < WIDTH * 2; i++) {
+        current_gen[i] = 1;
+    }
+    //-----------------------------------
+
+    // botom two lines 
+    //-----------------------------------
+    auto start = (WIDTH * HEIGHT) - (WIDTH * 2);
+    auto end = (WIDTH * HEIGHT);
+
+    for (auto i = start; i < end; i++) {
+        current_gen[i] = 1;
+    } 
+    //-----------------------------------
+
+    // left side
+    //-----------------------------------
+    for (auto i = 0; i < WIDTH * HEIGHT; i+=WIDTH) {
+        current_gen[i] = 1;
+        current_gen[i + 1] = 1;
+    }
+    //-----------------------------------
+
+    // right side
+    //-----------------------------------
+    for (auto i = WIDTH - 1; i < WIDTH * HEIGHT; i+=WIDTH) {
+        current_gen[i] = 1;
+        current_gen[i - 1] = 1;
+    }
 }
 
 /*
@@ -39,7 +72,9 @@ life<WIDTH, HEIGHT>::simulate() {
     for (auto y = 1; y < HEIGHT - 1; y++) {
         for (auto x = 1; x < WIDTH - 1; x++) {
             
-            std::size_t index {(y * WIDTH) + x};
+            auto x_wrap {(x + WIDTH) % WIDTH};
+            auto y_wrap {(y + HEIGHT) % HEIGHT};     
+            std::size_t index {(y_wrap * WIDTH) + x_wrap};
             
             // how many neighbours are alive
             int neighbours {};
@@ -77,6 +112,7 @@ life<WIDTH, HEIGHT>::simulate() {
     }   
     std::swap(next_gen, current_gen); 
     next_gen.fill(0);
+    generation_counter++;
 }
 
 
@@ -102,3 +138,22 @@ life<WIDTH, HEIGHT>::render_to_ARGB_buffer(std::array<std::uint32_t, WIDTH * HEI
         buffer[i] = (0x00FFFFFF * pixel) | 0xFF000000; 
     }
 }
+
+//-------------------------------
+template<std::size_t WIDTH, std::size_t HEIGHT>
+bool
+life<WIDTH, HEIGHT>::is_evolving() {
+   for (auto i = 0; i < WIDTH * HEIGHT; i++) {
+      if (current_gen[i] != next_gen[i]) {
+            return false;
+      }
+   }  
+   return true; 
+}
+
+//-------------------------------
+template<std::size_t WIDTH, std::size_t HEIGHT>
+std::size_t
+life<WIDTH, HEIGHT>::get_generation_counter() const {
+    return generation_counter;
+}   
