@@ -7,6 +7,7 @@
 // std
 #include <array>
 #include <cstdint>
+#include <iostream>
 
 class sdl_module final {
 public /* RAII */:
@@ -14,6 +15,8 @@ public /* RAII */:
     sdl_module(sdl_module const &) = delete;
     sdl_module(sdl_module &&) = delete;
     ~sdl_module();
+
+    int init();
    
 public /* functions */:
    bool event_loop();
@@ -24,19 +27,9 @@ public /* functions */:
         SDL_RenderCopy(m_renderer, m_renderTexture, nullptr, nullptr); 
    }
 
-   void draw_grid() {
-        SDL_SetRenderDrawColor(m_renderer, 31, 67, 124, 255);
-        
-        for (auto i = 0; i < width; i++) 
-            SDL_RenderDrawLine(m_renderer, i * scale * 2, height * scale * 2, i * scale * 2, 0);
-        
-        for (auto i = 0; i < width; i++) 
-            SDL_RenderDrawLine(m_renderer, 0, i * scale * 2, width * scale * 2 , i * scale * 2 );
-   } 
+   void draw_grid(); 
+   void swap_back_buffer(); 
 
-   void swap_back_buffer() {
-        SDL_RenderPresent(m_renderer);
-   }
 private /* data */:
     SDL_Event m_event;
     SDL_Window *m_window;
@@ -44,6 +37,8 @@ private /* data */:
     SDL_Texture *m_renderTexture;
     int width;
     int height;
+    int renderer_width;
+    int renderer_height;
     int scale;
 };
 #endif // SDL_MODULE_HPP

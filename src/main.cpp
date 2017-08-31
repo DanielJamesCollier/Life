@@ -4,9 +4,11 @@
 
 // std
 #include <cstdint>
+#include <cstdlib>
 #include <array>
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 using namespace std::chrono_literals;
 
@@ -16,7 +18,14 @@ int main() {
     constexpr auto window_scale {3}; 
 
     life<grid_width, grid_height> conway_grid;
+
     sdl_module sdl {grid_width, grid_height, window_scale};
+    
+    if (sdl.init() < 0) {
+        std::cerr << "SDL2 init failed\n";
+        SDL_Quit(); 
+        return EXIT_FAILURE;
+    }
 
     std::array<std::uint32_t, grid_width * grid_height> argb_buffer;
     
@@ -29,5 +38,5 @@ int main() {
         conway_grid.simulate();
         std::this_thread::sleep_for(60ms);
     } 
-    return 0;
+    return EXIT_SUCCESS;
 }
